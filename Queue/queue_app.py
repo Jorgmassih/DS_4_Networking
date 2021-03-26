@@ -44,10 +44,10 @@ class TrafficQueue(Queue):
 
 queue = TrafficQueue()
 
-def rx():
-	interfaces = range(1,21)
+def rx(interfaces: list, in_mean_time, in_sd_time):
+	
 	while True:
-		time.sleep(abs(random.gauss(3, 2)))
+		time.sleep(abs(random.gauss(in_mean_time, in_sd_time)))
 		
 		frame_id = hex(abs(random.randint(100, 5000)))
 		frame_time = time.ctime(time.time())
@@ -55,32 +55,35 @@ def rx():
 
 		queue.enqueue(Node(value=(frame_id, frame_time, input_int, output_int)))		
 
-def tx():
+def tx(out_mean_time, out_sd_time):
 	while True:
-		time.sleep(abs(random.gauss(3, 2)))
+		time.sleep(abs(random.gauss(out_mean_time, out_sd_time)))
 		queue.dequeue()
 
 	
 
 def app():
-	rx_thread = threading.Thread(target=rx)
-	tx_thread = threading.Thread(target=tx)
+	# List of interfaces to simulate
+	interfaces = range(1,21)
+
+	# Input/output mean and standard deviation for randomly time
+	# to await for rx/tx
+	in_mean_time, in_sd_time = (3,2)
+	out_mean_time, out_sd_time = (3,2)
+
+	# Create threads
+	rx_thread = threading.Thread(target=rx, args=(interfaces, in_mean_time, in_sd_time))
+	tx_thread = threading.Thread(target=tx, args=(out_mean_time, out_sd_time))
 
 	rx_thread.start()
 	tx_thread.start()
 
+	refresh_time = 0.5
+
+	# Will refresh the queue table in a rate of 'refresh_time' value
 	while True:
-		time.sleep(0.5)
+		time.sleep(refresh_time)
 		os.system('clear') if os.name == 'posix' else os.system('cls')
 		
 		print('Network Equipment Interfaces Queue')
-		print(queue.__repr__(), end= '\r')
-
-
-		
-		
-		
-	
-
-	
-	
+		print(queue, end= '\r')
