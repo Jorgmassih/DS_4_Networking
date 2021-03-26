@@ -44,8 +44,7 @@ class LinkedList:
 
 		# If a list was passed create a linked list upon that list
 		if l is not None:
-			self.list_to_linked(l)
-			
+			self.list_to_linked(l)			
 
 	def list_to_linked(self, lst: list, reverse:bool=False):
 			# Set the head to point to the first node
@@ -62,8 +61,6 @@ class LinkedList:
 
 				else:
 					current_node = current_node.next
-
-
 
 	def __repr__(self):
 		current_node = self.head
@@ -128,6 +125,7 @@ class LinkedList:
 		# Set the new item as new head
 		self.head = item
 
+
 class Queue(LinkedList):
 	"""
 	A class used to represent a Queue, this class inherits from
@@ -165,17 +163,34 @@ class Queue(LinkedList):
 	def dequeue(self):
 		# Deteches the actual front and points to the next one.
 		dequeued = self.front
-		self.front = self.front.next
-		dequeued.next = None
+
+		if dequeued:
+			self.front = self.front.next
+			dequeued.next = None
 
 		return dequeued
 
+
 class Stack(LinkedList):
+	"""
+	A class used to represent a Stack, this class inherits from
+	the class Linked List.
+
+	...
+
+	Attributes
+	----------
+	head : Node or None, Optional
+		The reference value for the head node.
+	l : List or None, Optional
+		List object to convert to Stack (It must be reversed first).
+"""
 	def __init__(self, head=None, l=None):
 		super().__init__(head=None, l=None)
 
 		# If a list was passed create a linked list upon that list
 		if l is not None:
+			# The list is reversed to mantain the concept about Stack DS
 			self.list_to_linked(lst=l[::-1])
 
 	@property
@@ -187,13 +202,15 @@ class Stack(LinkedList):
 		self.head = new
 
 	def push(self, item: Node):
-		old_top = self.top
-		self.top = item
-		self.top.next = old_top
+		# Calls the inherited method 'insert_first', wich adds
+		# a Node at the first position of the Linked List. 
+		self.insert_first(item)
 		
 	def pop(self):
+		# Detaches the Top from the first node and points it to the next node
 		popped = self.top
 		self.top = self.top.next
+		# Points the popped node to None
 		popped.next = None
 
 		return popped
